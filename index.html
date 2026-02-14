@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a0e0e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .story-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .story-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .map-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            max-height: 600px;
+        }
+
+        .india-map {
+            fill: #e2e8f0;
+            stroke: #cbd5e0;
+            stroke-width: 1;
+        }
+
+        .route-line {
+            fill: none;
+            stroke: #c53030;
+            stroke-width: 3;
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            stroke-linecap: round;
+            filter: drop-shadow(0 2px 8px rgba(197, 48, 48, 0.4));
+        }
+
+        .location-marker {
+            fill: #c53030;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .location-marker:hover {
+            transform: scale(1.2);
+        }
+
+        .location-label {
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            font-weight: 600;
+            fill: #2d3748;
+            text-anchor: middle;
+        }
+
+        .story-text {
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            fill: #4a5568;
+            text-anchor: middle;
+            font-style: italic;
+        }
+
+        .heart-pulse {
+            fill: #e53e3e;
+            opacity: 0;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        @keyframes drawRoute {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .story-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 700px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .story-panel h2 {
+            color: #c53030;
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .story-panel p {
+            color: #4a5568;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .memories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .memory-tag {
+            background: linear-gradient(135deg, #c53030, #9b2c2c);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95em;
+            box-shadow: 0 4px 10px rgba(197, 48, 48, 0.3);
+        }
+
+        .valentine-question {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin: 50px auto;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s ease;
+        }
+
+        .valentine-question.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .valentine-question h2 {
+            color: #c53030;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .yes-button {
+            background: linear-gradient(135deg, #c53030, #9b2c2c);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 35px;
+            font-size: 1.3em;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(197, 48, 48, 0.4);
+        }
+
+        .yes-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(197, 48, 48, 0.6);
+        }
+
+        .yes-button:active {
+            transform: translateY(0);
+        }
+
+        .final-message {
+            display: none;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin: 50px auto;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .final-message.show {
+            display: block;
+            animation: fadeInScale 1s ease;
+        }
+
+        .final-message h2 {
+            color: #c53030;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .final-message p {
+            color: #4a5568;
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .spicy-line {
+            color: #c53030;
+            font-size: 1.2em;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .petal {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(ellipse at center, #ff6b9d 0%, #c53030 100%);
+            border-radius: 50% 50% 50% 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .champagne-bottle {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 80px;
+            z-index: 9998;
+            transition: bottom 0.8s ease-out;
+        }
+
+        .champagne-bottle.pop {
+            bottom: 45%;
+        }
+
+        .champagne-cork {
+            position: fixed;
+            font-size: 30px;
+            opacity: 0;
+            z-index: 10000;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes corkPop {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-300px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 0.9em;
+            color: #2d3748;
+        }
+
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a0e0e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .start-content {
+            text-align: center;
+            color: white;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .start-content h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-content p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #c53030, #9b2c2c);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 40px;
+            font-size: 1.4em;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(197, 48, 48, 0.5);
+        }
+
+        .start-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(197, 48, 48, 0.7);
+        }
+
+        .start-button:active {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .map-container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .story-panel h2 {
+                font-size: 1.6em;
+            }
+            
+            .story-panel p {
+                font-size: 1.05em;
+            }
+
+            .start-content h1 {
+                font-size: 2.2em;
+            }
+
+            .start-content p {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <h1>Happy Valentine's Day</h1>
+            <p>I made something special for you...</p>
+            <button class="start-button" onclick="startExperience()">Begin Our Journey</button>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="audio-control" onclick="toggleMusic()" style="display: none;" id="audioControl">
+        <span id="musicIcon">🎵 Playing</span>
+    </div>
+
+    <div class="container" style="display: none;" id="mainContent">
+        <div class="map-container story-section">
+            <h1>Our Journey</h1>
+            <p class="subtitle">From strangers to something beautiful</p>
+            
+            <svg viewBox="0 0 800 900" id="indiaMap">
+                <!-- Simplified India outline -->
+                <path class="india-map" d="M 300,100 L 320,80 L 350,75 L 380,85 L 400,100 L 420,130 L 430,160 L 440,200 L 445,240 L 448,280 L 450,320 L 448,360 L 445,400 L 440,440 L 430,480 L 420,520 L 410,560 L 395,600 L 380,640 L 360,680 L 340,710 L 320,730 L 300,740 L 280,735 L 260,720 L 245,700 L 235,680 L 230,660 L 228,640 L 227,620 L 228,600 L 230,580 L 235,560 L 240,540 L 245,520 L 248,500 L 250,480 L 250,460 L 248,440 L 245,420 L 240,400 L 235,380 L 232,360 L 230,340 L 230,320 L 232,300 L 235,280 L 240,260 L 248,240 L 258,220 L 268,200 L 278,180 L 288,160 L 295,140 L 300,120 Z" />
+                
+                <!-- Route from Delhi to Odisha to Coorg -->
+                <path id="route" class="route-line" d="M 280,220 Q 320,280 360,340 Q 380,400 340,520" />
+                
+                <!-- Location markers -->
+                <g id="delhi" class="location" style="opacity: 0;">
+                    <circle class="location-marker" cx="280" cy="220" r="10"/>
+                    <text class="location-label" x="280" y="200">Delhi</text>
+                    <text class="story-text" x="280" y="250">Where I am</text>
+                </g>
+                
+                <g id="odisha" class="location" style="opacity: 0;">
+                    <circle class="location-marker" cx="360" cy="340" r="10"/>
+                    <text class="location-label" x="360" y="320">Odisha</text>
+                    <text class="story-text" x="360" y="370">Where you are</text>
+                </g>
+                
+                <g id="coorg" class="location" style="opacity: 0;">
+                    <circle class="location-marker" cx="340" cy="520" r="10"/>
+                    <text class="location-label" x="340" y="500">Coorg</text>
+                    <text class="story-text" x="340" y="550">Where we meet</text>
+                    <circle class="heart-pulse" cx="340" cy="520" r="15" style="opacity: 0;" id="coorgHeart"/>
+                </g>
+            </svg>
+        </div>
+
+        <div class="story-panel story-section">
+            <h2>August 2025</h2>
+            <p>Two strangers met accidentally on an app.</p>
+            <p>Neither of us knew what was coming.</p>
+        </div>
+
+        <div class="story-panel story-section">
+            <h2>The Talking Phase</h2>
+            <p>Days turned to weeks. Weeks turned to months.</p>
+            <p>Late night conversations. Messages that made us smile.</p>
+            <p>But we weren't taking it seriously... yet.</p>
+        </div>
+
+        <div class="story-panel story-section">
+            <h2>November 2025</h2>
+            <p>Something shifted.</p>
+            <p>The jokes felt different. The silences meant more.</p>
+            <p>This wasn't just talking anymore.</p>
+        </div>
+
+        <div class="story-panel story-section">
+            <h2>What We Found</h2>
+            <div class="memories">
+                <span class="memory-tag">🍽️ Love for food</span>
+                <span class="memory-tag">⚡ You are Gryffindor and I am Slytherin</span>
+                <span class="memory-tag">👀 Ser Duncan is hot! Those green eyes... damn</span>
+                <span class="memory-tag">🐉 GOT theories at 2 AM</span>
+                <span class="memory-tag">📚 Her book recommendations</span>
+                <span class="memory-tag">🤗 Longing for hugs</span>
+            </div>
+            <p style="margin-top: 25px; font-style: italic; color: #c53030;">
+                We found each other in the little things.
+            </p>
+        </div>
+
+        <div class="story-panel story-section">
+            <h2>February 2026</h2>
+            <p>The wait is almost over.</p>
+            <p>Coorg. Finally.</p>
+            <p>Our first real conversation, not through a screen.</p>
+            <p>Our first hug. Our first kiss.</p>
+            <p style="margin-top: 20px; color: #c53030; font-size: 1.1em;">
+                The moment we've been longing for.
+            </p>
+        </div>
+
+        <div class="valentine-question" id="question">
+            <h2>Would you be my Valentine?</h2>
+            <button class="yes-button" onclick="showFinalMessage()">Yes 💕</button>
+        </div>
+
+        <div class="final-message" id="finalMessage">
+            <h2>See you soon, my little one</h2>
+            <p>Can't wait to finally get my hands on you 😏</p>
+            <p class="spicy-line">27th can't come fast enough.</p>
+        </div>
+    </div>
+
+    <script>
+        let musicPlaying = true;
+        const music = document.getElementById('bgMusic');
+        let experienceStarted = false;
+
+        function startExperience() {
+            // Start music
+            music.play().catch(e => console.log('Audio play prevented'));
+            
+            // Hide start screen
+            document.getElementById('startScreen').classList.add('hidden');
+            
+            // Show main content
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('audioControl').style.display = 'block';
+            
+            // Start animation sequence after a brief delay
+            setTimeout(() => {
+                experienceStarted = true;
+                startAnimationSequence();
+            }, 500);
+        }
+        
+        function toggleMusic() {
+            const icon = document.getElementById('musicIcon');
+            if (musicPlaying) {
+                music.pause();
+                icon.textContent = '🔇 Paused';
+                musicPlaying = false;
+            } else {
+                music.play();
+                icon.textContent = '🎵 Playing';
+                musicPlaying = true;
+            }
+        }
+
+        // Animation sequence
+        let currentStep = 0;
+        const sections = document.querySelectorAll('.story-section');
+        
+        function showNextSection() {
+            if (currentStep < sections.length) {
+                sections[currentStep].classList.add('visible');
+                currentStep++;
+            }
+        }
+
+        function startAnimationSequence() {
+            showNextSection(); // Map appears
+            
+            setTimeout(() => {
+                // Animate Delhi
+                document.getElementById('delhi').style.opacity = '1';
+                document.getElementById('delhi').style.transition = 'opacity 1s';
+                
+                setTimeout(() => {
+                    showNextSection(); // August story
+                    
+                    setTimeout(() => {
+                        showNextSection(); // Talking phase
+                        
+                        setTimeout(() => {
+                            // Animate route to Odisha
+                            const route = document.getElementById('route');
+                            route.style.animation = 'drawRoute 2s forwards ease-in-out';
+                            
+                            setTimeout(() => {
+                                document.getElementById('odisha').style.opacity = '1';
+                                document.getElementById('odisha').style.transition = 'opacity 1s';
+                                
+                                setTimeout(() => {
+                                    showNextSection(); // November story
+                                    
+                                    setTimeout(() => {
+                                        showNextSection(); // Memories
+                                        
+                                        setTimeout(() => {
+                                            // Extend route to Coorg
+                                            route.setAttribute('d', 'M 280,220 Q 320,280 360,340 Q 380,400 340,520');
+                                            route.style.strokeDasharray = '3000';
+                                            route.style.strokeDashoffset = '3000';
+                                            route.style.animation = 'drawRoute 2s forwards ease-in-out';
+                                            
+                                            setTimeout(() => {
+                                                document.getElementById('coorg').style.opacity = '1';
+                                                document.getElementById('coorg').style.transition = 'opacity 1s';
+                                                document.getElementById('coorgHeart').style.opacity = '0.8';
+                                                
+                                                setTimeout(() => {
+                                                    showNextSection(); // February story
+                                                    
+                                                    setTimeout(() => {
+                                                        document.getElementById('question').classList.add('visible');
+                                                    }, 2000);
+                                                }, 2000);
+                                            }, 2000);
+                                        }, 3000);
+                                    }, 3000);
+                                }, 2000);
+                            }, 2000);
+                        }, 3000);
+                    }, 3000);
+                }, 2000);
+            }, 1000);
+        }
+
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.opacity = '1';
+            petal.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            petal.style.animationDelay = Math.random() * 2 + 's';
+            petal.style.animation = 'fall linear';
+            document.body.appendChild(petal);
+            
+            setTimeout(() => petal.remove(), 6000);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ffd700', '#00ff00', '#00bfff', '#ff69b4', '#ffa500'];
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.opacity = '1';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            confetti.style.animation = 'confettiFall linear';
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 4000);
+        }
+
+        function popChampagne() {
+            // Create bottle
+            const bottle = document.createElement('div');
+            bottle.className = 'champagne-bottle';
+            bottle.textContent = '🍾';
+            document.body.appendChild(bottle);
+            
+            // Pop animation
+            setTimeout(() => {
+                bottle.classList.add('pop');
+                
+                // Cork pop
+                setTimeout(() => {
+                    const cork = document.createElement('div');
+                    cork.className = 'champagne-cork';
+                    cork.textContent = '🍾';
+                    cork.style.left = '50%';
+                    cork.style.bottom = '45%';
+                    cork.style.animation = 'corkPop 1s ease-out';
+                    document.body.appendChild(cork);
+                    
+                    setTimeout(() => cork.remove(), 1000);
+                    
+                    // Spray confetti from bottle
+                    for (let i = 0; i < 100; i++) {
+                        setTimeout(() => createConfetti(), i * 20);
+                    }
+                }, 500);
+                
+                // Remove bottle
+                setTimeout(() => bottle.remove(), 3000);
+            }, 100);
+        }
+
+        function showFinalMessage() {
+            // Hide question
+            document.getElementById('question').style.display = 'none';
+            
+            // Show final message
+            document.getElementById('finalMessage').classList.add('show');
+            
+            // Pop champagne!
+            popChampagne();
+            
+            // Create rose petals
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createPetal(), i * 100);
+            }
+            
+            // More confetti waves for celebration
+            setTimeout(() => {
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => createConfetti(), i * 50);
+                }
+            }, 1500);
+            
+            setTimeout(() => {
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => createConfetti(), i * 50);
+                }
+            }, 3000);
+            
+            // Scroll to final message
+            setTimeout(() => {
+                document.getElementById('finalMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
+    </script>
+</body>
+</html>
